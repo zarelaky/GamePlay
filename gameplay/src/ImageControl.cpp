@@ -125,6 +125,10 @@ const char* ImageControl::getType() const
 
 void ImageControl::drawImages(SpriteBatch* spriteBatch, const Rectangle& clip)
 {
+    if (NULL == _batch) {
+        return;
+    }
+
     spriteBatch->finish();
 
     // An ImageControl is not part of the texture atlas but should use the same projection matrix.

@@ -730,15 +730,23 @@ bool initializeGL(WindowCreationParams* params)
         0
     };
 
-    if (!(__hrc = wglCreateContextAttribsARB(__hdc, 0, attribs) ) )
+    wglDeleteContext(tempContext);
+    if (!(__hrc = wglCreateContextAttribsARB(__hdc, 0, attribs)))
     {
-        wglDeleteContext(tempContext);
-        GP_ERROR("Failed to create OpenGL context.");
-        return false;
+        //wglDeleteContext(tempContext);
+        GP_WARN("Failed to create OpenGL context.");
+        __hrc = wglCreateContext(__hdc);
+        if (!__hrc)
+        {
+            DestroyWindow(hwnd);
+            GP_ERROR("Failed to create temporary context for initialization.");
+            return false;
+        }
+        // return false;
     }
 
     // Delete the old/temporary context and window
-    wglDeleteContext(tempContext);
+    //wglDeleteContext(tempContext);
 
     // Make the new context current
     if (!wglMakeCurrent(__hdc, __hrc) || !__hrc)
