@@ -475,7 +475,7 @@ bool TerrainPatch::updateMaterial()
         std::ostringstream defines;
         defines << "LAYER_COUNT " << _layers.size();
         defines << ";SAMPLER_COUNT " << _samplers.size();
-        
+
         if (_terrain->isFlagSet(Terrain::DEBUG_PATCHES))
             defines << ";DEBUG_PATCHES";
         if (_terrain->_normalMap)

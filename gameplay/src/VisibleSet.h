@@ -1,14 +1,14 @@
 #ifndef VISIBLESET_H_
 #define VISIBLESET_H_
 
-#include "Scene.h"
-
 namespace gameplay
 {
 
+class Scene;
+
 /**
  * Represents a set of nodes that are visible from the
- * scenes active camera. This provides an enumerator
+ * active camera. This provides an enumerator
  * to traverse the scene returning only visible nodes.
  */
 class VisibleSet
@@ -21,18 +21,11 @@ public:
     virtual ~VisibleSet() { }
 
     /**
-     * Sets the scene to determine the visible set from.
+     * Gets the active camera being used to test the visibility.
      *
-     * @param scene The scene to determine the visible set from.
+     * @return The active camera being used to test the visibility.
      */
-    virtual void setScene(Scene* scene) = 0;
-
-    /**
-     * Gets the scene to determine the visible set from.
-     *
-     * @return The scene to determine the visible set from.
-     */
-    virtual Scene* getScene() = 0;
+    virtual Camera* getActiveCamera() = 0;
 
     /**
      * Resets the enumerator for enumerating the visible set.

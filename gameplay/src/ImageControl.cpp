@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include "Base.h"
 #include "ImageControl.h"
 
