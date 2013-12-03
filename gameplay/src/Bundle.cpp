@@ -1007,6 +1007,10 @@ Model* Bundle::readModel(const char* nodeId)
                 {
                     std::string materialName = readString(_stream);
                     std::string materialPath = getMaterialPath();
+                    //  [11/21/2013 qmt]
+                    if (materialPath.empty()) {
+                        break;
+                    }
                     materialPath.append("#");
                     materialPath.append(materialName);
                     Material* material = Material::create(materialPath.c_str());
