@@ -62,13 +62,12 @@ void SamplesGame::initialize()
             sampleButton->setText(sampleRecord.title.c_str());
             sampleButton->setAutoWidth(true);
             sampleButton->setHeight(60);      // Tall enough to touch easily on a BB10 device.
-            sampleButton->setConsumeInputEvents(false);   // This lets the user scroll the container if they swipe starting from a button.
             sampleButton->addListener(this, Control::Listener::CLICK);
             _sampleSelectForm->addControl(sampleButton);
             sampleButton->release();
         }
     }
-    _sampleSelectForm->setState(Control::FOCUS);
+    _sampleSelectForm->setFocus();
 
     // Disable virtual gamepads.
     unsigned int gamepadCount = getGamepadCount();
@@ -206,6 +205,24 @@ void SamplesGame::gestureTapEvent(int x, int y)
         _activeSample->gestureTapEvent(x, y);
 }
 
+void SamplesGame::gestureLongTapEvent(int x, int y, float duration)
+{
+	if (_activeSample)
+		_activeSample->gestureLongTapEvent(x, y, duration);
+}
+
+void SamplesGame::gestureDragEvent(int x, int y)
+{
+	if (_activeSample)
+		_activeSample->gestureDragEvent(x, y);
+}
+
+void SamplesGame::gestureDropEvent(int x, int y)
+{
+	if (_activeSample)
+		_activeSample->gestureDropEvent(x, y);
+}
+
 void SamplesGame::controlEvent(Control* control, EventType evt)
 {
     const size_t size = _samples->size();
@@ -257,7 +274,7 @@ void SamplesGame::exitActiveSample()
         SAFE_DELETE(_activeSample);
 
         _sampleSelectForm->setEnabled(true);
-        _sampleSelectForm->setState(Control::FOCUS);
+        _sampleSelectForm->setFocus();
     }
 
     // Reset some game options
