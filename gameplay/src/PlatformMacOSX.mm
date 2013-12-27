@@ -1613,6 +1613,11 @@ extern void print(const char* format, ...)
     vfprintf(stderr, format, argptr);
     va_end(argptr);
 }
+
+extern int strcmpnocase(const char* s1, const char* s2)
+{
+    return strcasecmp(s1, s2);
+}
     
 Platform::Platform(Game* game)
 : _game(game)
@@ -2322,6 +2327,98 @@ bool Platform::launchURL(const char *url)
     const OSStatus err = LSOpenCFURLRef(urlRef, 0);
     CFRelease(urlRef);
     return (err == noErr);
+}
+
+NSString* getAbsolutePath(const char* path)
+{
+    NSString* bundlePathStr = [[[NSBundle mainBundle] bundlePath] stringByAppendingString:@"/Contents/Resources"];
+    if (path == NULL )
+        return bundlePathStr;
+    
+    NSString* absPath = [NSString stringWithUTF8String:path];
+    if ([absPath length] == 0)
+        return @"";
+    
+    if ([absPath hasPrefix:@"/"])
+    {
+        absPath = [NSString stringWithUTF8String:path];
+    }
+    else
+    {
+        absPath = bundlePathStr;
+        absPath = [absPath stringByAppendingString:@"/"];
+        absPath = [absPath stringByAppendingString:[NSString stringWithUTF8String:path]];
+    }
+    return absPath;
+}
+
+std::string Platform::displayFileDialog(size_t mode, const char* title, const char* filterDescription, const char* filterExtensions, const char* initialDirectory)
+{
+    std::string filename = "";
+    
+    if (mode == FileSystem::OPEN)
+    {
+        NSOpenPanel* openPanel = [NSOpenPanel openPanel];
+        
+        [openPanel setCanChooseFiles:TRUE];
+        [openPanel setCanChooseDirectories:FALSE];
+        [openPanel setAllowsMultipleSelection:FALSE];
+
+        // Title
+        NSString* titleStr = [NSString stringWithUTF8String:title];
+        [openPanel setTitle:titleStr];
+        
+        // Filter ext.
+        NSString* ext = [NSString stringWithUTF8String:filterExtensions];
+        NSArray* fileTypes = [NSArray arrayWithObjects: ext, nil];
+        [openPanel setAllowedFileTypes:fileTypes];
+        
+        // Set the initial directory
+        NSString* absPath = getAbsolutePath(initialDirectory);
+        NSURL* url = [NSURL fileURLWithPath:absPath];
+        [openPanel setDirectoryURL:url];
+        
+        // Show the open dialog
+        if ([openPanel runModal] == NSOKButton)
+        {
+            NSURL* selectedFileName = [openPanel URL];
+            NSString* urlStr = [selectedFileName absoluteString];
+            filename = std::string([urlStr UTF8String]);
+            const std::string fileProtocol = std::string("file://localhost");
+            filename.replace(filename.find(fileProtocol), fileProtocol.size(), "");
+        }
+    }
+    else
+    {
+        NSSavePanel* savePanel = [NSSavePanel savePanel];
+        [savePanel setCanCreateDirectories:TRUE];
+        [savePanel setCanSelectHiddenExtension:TRUE];
+        // Title
+        NSString* titleStr = [NSString stringWithUTF8String:title];
+        [savePanel setTitle:titleStr];
+        
+        // Filter ext.
+        NSString* ext = [NSString stringWithUTF8String:filterExtensions];
+        NSArray* fileTypes = [NSArray arrayWithObjects: ext, nil];
+        [savePanel setAllowedFileTypes:fileTypes];
+        
+        // Set the initial directory
+        NSString* absPath = getAbsolutePath(initialDirectory);
+        NSURL* url = [NSURL fileURLWithPath:absPath];
+        [savePanel setDirectoryURL:url];
+        
+        // Show the save dialog
+        if ([savePanel runModal] == NSOKButton)
+        {
+            NSURL* selectedFileName = [savePanel URL];
+            NSString* urlStr = [selectedFileName absoluteString];
+            filename = std::string([urlStr UTF8String]);
+            const std::string fileProtocol = std::string("file://localhost");
+            filename.replace(filename.find(fileProtocol), fileProtocol.size(), "");
+        }
+    }
+    
+    return filename;
 }
 
 #endif

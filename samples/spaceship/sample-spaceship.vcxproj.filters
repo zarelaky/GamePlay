@@ -21,19 +21,7 @@
     <None Include="res\background.ogg">
       <Filter>res</Filter>
     </None>
-    <None Include="res\challenge.form">
-      <Filter>res</Filter>
-    </None>
-    <None Include="res\menu.form">
-      <Filter>res</Filter>
-    </None>
-    <None Include="res\menu.theme">
-      <Filter>res</Filter>
-    </None>
     <None Include="res\spaceship.gpb">
-      <Filter>res</Filter>
-    </None>
-    <None Include="res\spaceship.mb">
       <Filter>res</Filter>
     </None>
     <None Include="res\shaders\colored.frag">
@@ -104,13 +92,7 @@
     <Image Include="res\background.png">
       <Filter>res</Filter>
     </Image>
-    <Image Include="res\menuAtlas.png">
-      <Filter>res</Filter>
-    </Image>
     <Image Include="res\propulsion_glow.png">
-      <Filter>res</Filter>
-    </Image>
-    <Image Include="res\logo_powered_white.png">
       <Filter>res</Filter>
     </Image>
   </ItemGroup>

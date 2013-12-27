@@ -43,7 +43,7 @@ LightSample::LightSample()
 void LightSample::initialize()
 {
     // Create the font for drawing the framerate.
-    _font = Font::create("res/common/arial.gpb");
+    _font = Font::create("res/ui/arial.gpb");
 
 	// Load the scene
 	_scene = Scene::load("res/common/lightBrickWall.gpb");
@@ -97,7 +97,7 @@ void LightSample::initialize()
 	_model->setMaterial(_lighting);
 
     // Create and initialize ui form
-	_form = Form::create("res/common/light.form");
+    _form = Form::create("res/common/light.form");
     _properties = static_cast<Container*>(_form->getControl("lightProperties"));
 	_redSlider = static_cast<Slider*>(_form->getControl("redSlider"));
 	_redSlider->addListener(this, Control::Listener::VALUE_CHANGED);
@@ -380,7 +380,7 @@ void LightSample::initializeDirectionalTechnique(const char* technique)
 {
 	_lighting->getTechnique(technique)->getParameter("u_ambientColor")->setValue(Vector3(0.0f, 0.0f, 0.0f));
     _lighting->getTechnique(technique)->getParameter("u_directionalLightColor[0]")->setValue(Vector3(_redSlider->getValue(), _greenSlider->getValue(), _blueSlider->getValue()));
-    _lighting->getTechnique(technique)->getParameter("u_directionalLightDirection[0]")->bindValue(_directionalLightNode, &Node::getForwardVectorWorld); 
+    _lighting->getTechnique(technique)->getParameter("u_directionalLightDirection[0]")->bindValue(_directionalLightNode, &Node::getForwardVectorView); 
 }	
 
 void LightSample::initializeSpotTechnique(const char* technique)

@@ -1,3 +1,4 @@
+
 set(GAMEPLAY_SRC
     src/AbsoluteLayout.cpp
     src/AbsoluteLayout.h
@@ -48,8 +49,8 @@ set(GAMEPLAY_SRC
     src/Container.h
     src/Control.cpp
     src/Control.h
-	src/ControlFactory.h
-	src/ControlFactory.cpp
+    src/ControlFactory.h
+    src/ControlFactory.cpp
     src/Curve.cpp
     src/Curve.h
     src/DebugNew.cpp
@@ -611,6 +612,12 @@ set(GAMEPLAY_RES_SHADERS
     res/shaders/textured.vert
 )
 
+set(GAMEPLAY_RES_SHADERS
+    res/ui/arial.gpb
+    res/ui/default.png
+    res/ui/default.theme
+)
+
 include_directories( 
     src
     ../external-deps/lua/include
@@ -622,7 +629,14 @@ include_directories(
     ../external-deps/glew/include
 )
 
+IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GTK2 REQUIRED gtk+-2.0)
+include_directories(${GTK2_INCLUDE_DIRS})
+add_definitions(${GTK2_CFLAGS_OTHER})
 add_definitions(-D__linux__)
+ENDIF(CMAKE_SYSTEM_NAME MATCHES "Linux")
+
 add_definitions(-lstdc++)
 
 add_library(gameplay STATIC
@@ -637,7 +651,7 @@ set_target_properties(gameplay PROPERTIES
 )
 
 source_group(lua FILES ${GAMEPLAY_LUA})
-source_group(res FILES ${GAMEPLAY_RES} ${GAMEPLAY_RES} ${GAMEPLAY_RES_SHADERS})
+source_group(res FILES ${GAMEPLAY_RES} ${GAMEPLAY_RES} ${GAMEPLAY_RES_SHADERS} ${GAMEPLAY_RES_UI})
 source_group(src FILES ${GAMEPLAY_SRC})
 
 

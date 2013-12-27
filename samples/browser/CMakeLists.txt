@@ -41,9 +41,12 @@ set(GAMEPLAY_LIBRARIES
     dl
     X11
     pthread
+    gtk-x11-2.0
+    glib-2.0
+    gobject-2.0
 ) 
 
-add_definitions(-lstdc++ -lgameplay -lm -llua -lz -lpng -lvorbis -logg -lBulletCollision -lBulletDynamics -lLinearMath -lopenal -LGLEW -lGL -lrt -ldl -lX11 -lpthread)
+add_definitions(-lstdc++ -lgameplay -lm -llua -lz -lpng -lvorbis -logg -lBulletCollision -lBulletDynamics -lLinearMath -lopenal -LGLEW -lGL -lrt -ldl -lX11 -lpthread -lgtk-x11-2.0 -lglib-2.0 -lgobject-2.0)
 
 set( GAME_NAME sample-browser)
 
@@ -106,12 +109,13 @@ set_target_properties(${GAME_NAME} PROPERTIES
     CLEAN_DIRECT_OUTPUT 1
 )
 
-source_group(res FILES ${GAME_RES} ${GAMEPLAY_RES} ${GAME_RES_SHADERS} ${GAME_RES_SHADERS_LIB})
+source_group(res FILES ${GAME_RES} ${GAMEPLAY_RES} ${GAMEPLAY_RES_SHADERS} ${GAMEPLAY_RES_UI})
 source_group(src FILES ${GAME_SRC})
 
 COPY_RES( ${GAME_NAME} )
 COPY_RES_EXTRA( ${GAME_NAME} ${CMAKE_SOURCE_DIR}/gameplay
     res/logo_powered_white.png 
     res/shaders/*
-    )
+    res/ui/*
+)
 

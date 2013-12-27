@@ -9,30 +9,13 @@ namespace gameplay
 {
 
 /**
- * Similar to a checkbox, a radio button can be toggled between two states.
+ * Defines a radio button control.
  *
- * However, a radio button can belong to a group, and only one radio button
+ * Radio buttons can be toggled between two states.
+ * A radio button can belong to a group, and only one radio button
  * from a group can be selected at one time.
  *
- * The following properties are available for radio buttons:
-
- @verbatim
-    radioButton <RadioButton ID>
-    {
-         style       = <Style ID>
-         alignment   = <Control::Alignment constant> // Note: 'position' will be ignored.
-         position    = <x, y>
-         autoWidth   = <bool>
-         autoHeight  = <bool>
-         size        = <width, height>
-         width       = <width>   // Can be used in place of 'size', e.g. with 'autoHeight = true'
-         height      = <height>  // Can be used in place of 'size', e.g. with 'autoWidth = true'
-         text        = <string>
-         group       = <string>
-         iconSize    = <width, height>   // The size to draw the radio button icon, if different from its size in the texture.
-         consumeEvents = <bool>          // Whether the radio button propagates input events to the Game's input event handler. Default is true.
-    }
- @endverbatim
+ * @see http://blackberry.github.io/GamePlay/docs/file-formats.html#wiki-UI_Forms
  */
 class RadioButton : public Button
 {
@@ -42,15 +25,15 @@ class RadioButton : public Button
 public:
 
     /**
-     * Create a new radio button control.
+     * Creates a new RadioButton.
      *
-     * @param id The control's ID.
-     * @param style The control's style.
+     * @param id The radio button ID.
+     * @param id The radio button style (optional).
      *
      * @return The new radio button.
      * @script{create}
      */
-    static RadioButton* create(const char* id, Theme::Style* style);
+    static RadioButton* create(const char* id, Theme::Style* style = NULL);
 
     /**
      * Get whether this radio button is currently selected.
@@ -125,11 +108,16 @@ protected:
      * Create a radio button with a given style and properties.
      *
      * @param style The style to apply to this radio button.
-     * @param properties The properties to set on this radio button.
+     * @param properties A properties object containing a definition of the radio button (optional).
      *
      * @return The new radio button.
      */
-    static Control* create(Theme::Style* style, Properties* properties);
+    static Control* create(Theme::Style* style, Properties* properties = NULL);
+
+    /**
+     * @see Control::initialize
+     */
+    void initialize(const char* typeName, Theme::Style* style, Properties* properties);
 
     /**
      * Keyboard callback on key events.
@@ -154,12 +142,9 @@ protected:
     void update(const Control* container, const Vector2& offset);
 
     /**
-     * Draw the images associated with this control.
-     *
-     * @param spriteBatch The sprite batch containing this control's icons.
-     * @param clip The clipping rectangle of this control's parent container.
+     * @see Control::drawImages
      */
-    void drawImages(SpriteBatch* spriteBatch, const Rectangle& clip);
+    unsigned int drawImages(Form* form, const Rectangle& clip);
 
     /**
      * Clear the _selected flag of all radio buttons in the given group.

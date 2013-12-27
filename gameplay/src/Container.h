@@ -9,44 +9,9 @@ namespace gameplay
 {
 
 /**
- * A container is a UI control that can contain other controls.
+ * Defines a container that contains zero or more controls.
  *
- * The following properties are available for containers:
-
- @verbatim
-    container <containerID>
-    {
-         // Container properties.
-         layout   = <Layout::Type>        // A value from the Layout::Type enum.  E.g.: LAYOUT_VERTICAL
-         style    = <styleID>           // A style from the form's theme.
-         alignment   = <Control::Alignment constant> // Note: 'position' will be ignored.
-         position    = <x, y>    // Position of the container on-screen, measured in pixels.
-         autoWidth   = <bool>
-         autoHeight  = <bool>
-         size        = <width, height>   // Size of the container, measured in pixels.
-         width       = <width>   // Can be used in place of 'size', e.g. with 'autoHeight = true'
-         height      = <height>  // Can be used in place of 'size', e.g. with 'autoWidth = true'
-         scroll      = <Container::Scroll constant> // Whether scrolling is allowed and in which directions.
-         scrollBarsAutoHide = <bool>        // Whether scrollbars fade out when not in use.
-         scrollingFriction = <float>        // Friction applied to inertial scrolling.
-         scrollWheelRequiresFocus = <bool>  // Whether focus or hover state handles scroll-wheel events.
-         scrollWheelSpeed = <float>         // Speed to scroll at on a scroll-wheel event.
-         consumeEvents = <bool>             // Whether the container propagates input events to the Game's input event handler. Default is true.
-
-         // All the nested controls within this container.
-         container 
-         { 
-             ...
-         }
-
-         label { }
-         textBox { }
-         button { }
-         checkBox { }
-         radioButton { }
-         slider { }
-    }
- @endverbatim
+ * @see http://blackberry.github.io/GamePlay/docs/file-formats.html#wiki-UI_Forms
  */
 class Container : public Control
 {
@@ -73,16 +38,16 @@ public:
     };
 
     /**
-     * Create a new container.
+     * Creates a new container.
      *
-     * @param id The container's ID.
-     * @param style The container's style.
-     * @param layoutType The container's layout type.
+     * @param id The container ID.
+     * @param style The container style (optional).
+     * @param layout The container layout (optional).
      *
      * @return The new container.
      * @script{create}
      */
-    static Container* create(const char* id, Theme::Style* style, Layout::Type layoutType = Layout::LAYOUT_ABSOLUTE);
+    static Container* create(const char* id, Theme::Style* style = NULL, Layout::Type layout = Layout::LAYOUT_ABSOLUTE);
 
     /**
      * Get this container's layout.
@@ -91,20 +56,26 @@ public:
      */
     Layout* getLayout();
 
+	/**
+	 * Sets the layout type for this container.
+	 *
+	 * @param type The new layout type for the container.
+	 */
+	void setLayout(Layout::Type type);
+
     /**
-     * Add a control to this layout.
-     * The control will be assigned the next available index.
+     * Adds a new control to this container.
      *
-     * @param control The Control to add.
+	 * @param control The control to add.
      *
-     * @return The index assigned to the added Control.
+     * @return The index assigned to the new Control.
      */
     unsigned int addControl(Control* control);
 
     /**
-     * Insert a control at a specific index.
+     * Inserts a control at a specific index.
      *
-     * @param control The control to add.
+     * @param control The control to insert.
      * @param index The index at which to insert the control.
      */
     void insertControl(Control* control, unsigned int index);
@@ -202,6 +173,11 @@ public:
      * @return Whether this container is currently being scrolled.
      */
     bool isScrolling() const;
+
+    /**
+     * Stops this container from scrolling if it is currently being scrolled.
+     */
+    void stopScrolling();
 
     /**
      * Get the friction applied to scrolling velocity for this container.
@@ -317,19 +293,16 @@ protected:
      * Create a container with a given style and properties, including a list of controls.
      *
      * @param style The style to apply to this container.
-     * @param properties The properties to set on this container, including nested controls.
+     * @param properties A properties object containing a definition of the container and its nested controls (optional).
      *
      * @return The new container.
      */
-    static Control* create(Theme::Style* style, Properties* properties);
+    static Control* create(Theme::Style* style, Properties* properties = NULL);
 
     /**
-     * Initialize properties common to all Containers from a Properties object.
-     *
-     * @param style The style to apply to this control.
-     * @param properties The properties to set on this control.
+     * @see Control::initialize
      */
-    void initialize(Theme::Style* style, Properties* properties);
+    void initialize(const char* typeName, Theme::Style* style, Properties* properties);
 
     /**
      * Updates each control within this container,
@@ -364,24 +337,16 @@ protected:
     virtual bool isDirty();
 
     /**
-     * Adds controls nested within a properties object to this container,
-     * searching for styles within the given theme.
+     * Adds controls nested within a properties object to this container.
      *
-     * @param theme The them to add controls from
      * @param properties The properties to use.
      */
-    void addControls(Theme* theme, Properties* properties);
+    void addControls(Properties* properties);
 
     /**
-     * Draws a sprite batch for the specified clipping rect.
-     *
-     * @param spriteBatch The sprite batch to use.
-     * @param clip The clipping rectangle.
-     * @param needsClear Whether it needs to be cleared.
-     * @param cleared Whether it was previously cleared
-     * @param targetHeight The targets height
+     * @see Control::draw
      */
-    virtual void draw(SpriteBatch* spriteBatch, const Rectangle& clip, bool needsClear, bool cleared, float targetHeight);
+    virtual unsigned int draw(Form* form, const Rectangle& clip);
 
     /**
      * Update scroll position and velocity.
@@ -585,8 +550,6 @@ private:
 
     // Starts scrolling at the given horizontal and vertical speeds.
     void startScrolling(float x, float y, bool resetTime = true);
-
-    void stopScrolling();
 
     void clearContacts();
     bool inContact();

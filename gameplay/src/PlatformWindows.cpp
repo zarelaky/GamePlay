@@ -9,6 +9,7 @@
 #include "ScriptController.h"
 #include <GL/wglew.h>
 #include <windowsx.h>
+#include <Commdlg.h>
 #include <shellapi.h>
 #ifdef GP_USE_GAMEPAD
 #include <XInput.h>
@@ -345,7 +346,7 @@ LRESULT CALLBACK __WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     switch (msg)
     {
     case WM_CLOSE:
-        DestroyWindow(__hwnd);
+        exit(0);
         return 0;
 
     case WM_DESTROY:
@@ -505,6 +506,11 @@ extern void print(const char* format, ...)
         SAFE_DELETE_ARRAY(buf);
     }
     va_end(argptr);
+}
+
+extern int strcmpnocase(const char* s1, const char* s2)
+{
+    return _strcmpi(s1, s2);
 }
 
 Platform::Platform(Game* game)
@@ -725,23 +731,15 @@ bool initializeGL(WindowCreationParams* params)
         0
     };
 
-    wglDeleteContext(tempContext);
-    if (!(__hrc = wglCreateContextAttribsARB(__hdc, 0, attribs)))
+    if (!(__hrc = wglCreateContextAttribsARB(__hdc, 0, attribs) ) )
     {
-        //wglDeleteContext(tempContext);
-        GP_WARN("Failed to create OpenGL context.");
-        __hrc = wglCreateContext(__hdc);
-        if (!__hrc)
-        {
-            DestroyWindow(hwnd);
-            GP_ERROR("Failed to create temporary context for initialization.");
-            return false;
-        }
-        // return false;
+        wglDeleteContext(tempContext);
+        GP_ERROR("Failed to create OpenGL context.");
+        return false;
     }
 
     // Delete the old/temporary context and window
-    //wglDeleteContext(tempContext);
+    wglDeleteContext(tempContext);
 
     // Make the new context current
     if (!wglMakeCurrent(__hdc, __hrc) || !__hrc)
@@ -1355,6 +1353,77 @@ bool Platform::launchURL(const char* url)
     int r = (int)ShellExecute(NULL, NULL, wurl, NULL, NULL, SW_SHOWNORMAL);
     SAFE_DELETE_ARRAY(wurl);
     return (r > 32);
+}
+
+std::string Platform::displayFileDialog(size_t mode, const char* title, const char* filterDescription, const char* filterExtensions, const char* initialDirectory)
+{
+    std::string filename;
+    OPENFILENAMEA ofn;
+    memset(&ofn, 0, sizeof(ofn));
+
+    // Set initial directory
+    std::string initialDirectoryStr;
+    char currentDir[256];
+    if (initialDirectory == NULL)
+    {
+        char currentDir[512];
+        GetCurrentDirectoryA(512, currentDir);
+        initialDirectoryStr = currentDir;
+    }
+    else
+    {
+        initialDirectoryStr = initialDirectory;
+    }
+
+    // Filter on extensions
+    std::istringstream f(filterExtensions);
+    std::string s;
+    unsigned int count = 0;
+    std::string descStr = filterDescription;
+    descStr += " (";
+    std::string extStr = "";
+    while (std::getline(f, s, ';'))
+    {
+        if (count > 0)
+            extStr += ";";
+        extStr += "*.";
+        extStr += s;
+        count++;
+    }
+    descStr += extStr;
+    descStr += ")";
+    char filter[1024];
+    memset(filter, 0, 1024);
+    strcpy(filter, descStr.c_str());
+    strcpy(filter + descStr.length() + 1, extStr.c_str());
+
+    char szFileName[512] = "";
+    ofn.lpstrFile = szFileName;
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = GetForegroundWindow();
+    ofn.lpstrTitle = title;
+    ofn.lpstrFilter = filter;
+    ofn.lpstrInitialDir = initialDirectoryStr.c_str();
+    ofn.nMaxFile = 512;
+    ofn.lpstrDefExt = filter;
+
+    if (mode == FileSystem::OPEN)
+    {
+        ofn.Flags = OFN_HIDEREADONLY | OFN_FILEMUSTEXIST;
+        GetOpenFileNameA(&ofn);
+    }
+    else
+    {
+        ofn.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
+        GetSaveFileNameA(&ofn);
+    }
+
+    filename = szFileName;
+        
+    if (initialDirectory == NULL)
+        SetCurrentDirectoryA(currentDir);
+
+    return filename;
 }
 
 }

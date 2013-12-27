@@ -1469,6 +1469,11 @@ extern void print(const char* format, ...)
     va_end(argptr);
 }
 
+extern int strcmpnocase(const char* s1, const char* s2)
+{
+    return strcasecmp(s1, s2);
+}
+
 Platform::Platform(Game* game) : _game(game)
 {
 }
@@ -1697,7 +1702,12 @@ bool Platform::launchURL(const char *url)
 
     return [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithUTF8String: url]]];
 }
-    
+
+std::string Platform::displayFileDialog(size_t mode, const char* title, const char* filterDescription, const char* filterExtensions, const char* initialDirectory)
+{
+    return "";
+}
+ 
 }
 
 #endif

@@ -426,6 +426,11 @@ extern void print(const char* format, ...)
     va_end(argptr);
 }
 
+extern int strcmpnocase(const char* s1, const char* s2)
+{
+    return strcasecmp(s1, s2);
+}
+
 EGLenum checkErrorEGL(const char* msg)
 {
     GP_ASSERT(msg);
@@ -1648,6 +1653,11 @@ bool Platform::launchURL(const char* url)
         return false;
 
     return navigator_invoke(url, NULL) == BPS_SUCCESS;
+}
+
+std::string Platform::displayFileDialog(size_t mode, const char* title, const char* filterDescription, const char* filterExtensions, const char* initialDirectory)
+{
+    return "";
 }
 
 }
