@@ -24,9 +24,6 @@
     <ClCompile Include="src\Plane.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\PlatformBlackBerry.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\PlatformWindows.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -277,9 +274,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\gameplay-main-android.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gameplay-main-blackberry.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\gameplay-main-linux.cpp">
@@ -877,6 +871,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\lua\lua_JoystickControl.cpp">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lua\lua_ContainerDirection.cpp">
       <Filter>src\lua</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1737,6 +1734,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\lua\lua_JoystickControl.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lua\lua_ContainerDirection.h">
       <Filter>src\lua</Filter>
     </ClInclude>
   </ItemGroup>

@@ -77,7 +77,6 @@ set(GAMEPLAY_SRC
     src/Gamepad.cpp
     src/Gamepad.h
     src/gameplay-main-android.cpp
-    src/gameplay-main-blackberry.cpp
     src/gameplay-main-linux.cpp
     src/gameplay-main-windows.cpp
     src/Gesture.h
@@ -162,7 +161,6 @@ set(GAMEPLAY_SRC
     src/Platform.h
     src/Platform.cpp
     src/PlatformAndroid.cpp
-    src/PlatformBlackBerry.cpp
     src/PlatformLinux.cpp
     src/PlatformWindows.cpp
     src/Properties.cpp
@@ -294,6 +292,8 @@ set(GAMEPLAY_LUA
     src/lua/lua_CheckBox.h
     src/lua/lua_Container.cpp
     src/lua/lua_Container.h
+    src/lua/lua_ContainerDirection.cpp
+    src/lua/lua_ContainerDirection.h
     src/lua/lua_ContainerScroll.cpp
     src/lua/lua_ContainerScroll.h
     src/lua/lua_Control.cpp
@@ -623,7 +623,8 @@ include_directories(
     ../external-deps/bullet/include
     ../external-deps/png/include
     ../external-deps/zlib/include
-    ../external-deps/oggvorbis/include
+    ../external-deps/ogg/include
+    ../external-deps/vorbis/include
     ../external-deps/openal/include
     ../external-deps/glew/include
 )
@@ -636,6 +637,7 @@ add_definitions(${GTK2_CFLAGS_OTHER})
 add_definitions(-D__linux__)
 ENDIF(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
+add_definitions(-std=c++11)
 add_definitions(-lstdc++)
 
 add_library(gameplay STATIC
