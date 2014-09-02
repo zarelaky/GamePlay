@@ -29,7 +29,9 @@ VertexAttributeBinding::~VertexAttributeBinding()
 
     if (_handle)
     {
-        GL_ASSERT( glDeleteVertexArrays(1, &_handle) );
+#ifdef USE_VAO
+       GL_ASSERT( glDeleteVertexArrays(1, &_handle) );
+#endif // USE_VAO
         _handle = 0;
     }
 }
@@ -206,7 +208,9 @@ VertexAttributeBinding* VertexAttributeBinding::create(Mesh* mesh, const VertexF
 
     if (b->_handle)
     {
+#ifdef USE_VAO
         GL_ASSERT( glBindVertexArray(0) );
+#endif // USE_VAO
     }
 
     return b;
@@ -239,8 +243,10 @@ void VertexAttributeBinding::bind()
 {
     if (_handle)
     {
+#ifdef USE_VAO
         // Hardware mode
         GL_ASSERT( glBindVertexArray(_handle) );
+#endif // USE_VAO
     }
     else
     {
@@ -271,8 +277,10 @@ void VertexAttributeBinding::unbind()
 {
     if (_handle)
     {
+#ifdef USE_VAO
         // Hardware mode
-        GL_ASSERT( glBindVertexArray(0) );
+        //GL_ASSERT( glBindVertexArray(0) );
+#endif // USE_VAO
     }
     else
     {

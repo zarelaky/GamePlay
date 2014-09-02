@@ -1,4 +1,4 @@
-#ifdef __linux__
+#ifdef GP_PLATFORM_LINUX
 
 #include "Base.h"
 #include "Platform.h"

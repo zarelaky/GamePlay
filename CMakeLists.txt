@@ -15,9 +15,13 @@ endif()
 if ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 set(ARCH_DIR "x64")
 else()
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
+set(ARCH_DIR "arm")
+else()
 set(ARCH_DIR "x86")
+endif ()
 endif()
-
+MESSAGE(${ARCH_DIR})
 # gameplay library
 add_subdirectory(gameplay)
 

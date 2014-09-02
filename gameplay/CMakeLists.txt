@@ -79,6 +79,7 @@ set(GAMEPLAY_SRC
     src/gameplay-main-android.cpp
     src/gameplay-main-blackberry.cpp
     src/gameplay-main-linux.cpp
+    src/gameplay-main-linuxglesv2kms.cpp
     src/gameplay-main-windows.cpp
     src/Gesture.h
     src/HeightField.cpp
@@ -163,6 +164,7 @@ set(GAMEPLAY_SRC
     src/Platform.cpp
     src/PlatformAndroid.cpp
     src/PlatformBlackBerry.cpp
+    src/PlatformLinuxGles2Kms.cpp
     src/PlatformLinux.cpp
     src/PlatformWindows.cpp
     src/Properties.cpp
@@ -627,13 +629,45 @@ include_directories(
     ../external-deps/openal/include
     ../external-deps/glew/include
 )
-
+MESSAGE("INFO ${ARCH}")
 IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(GTK2 REQUIRED gtk+-2.0)
-include_directories(${GTK2_INCLUDE_DIRS})
-add_definitions(${GTK2_CFLAGS_OTHER})
-add_definitions(-D__linux__)
+IF( ${PLATFORM} MATCHES "arm")
+    add_definitions(-DGP_PLATFORM_LINUX_KMS)
+    pkg_check_modules(EGL REQUIRED egl)
+    include_directories(${EGL_INCLUDE_DIRS})
+    pkg_check_modules(GLESv2 REQUIRED glesv2)
+    include_directories(${GLESv2_INCLUDE_DIRS})
+    
+    pkg_check_modules(GBM REQUIRED gbm)
+    include_directories(${GBM_INCLUDE_DIRS})
+
+    pkg_check_modules(DRM REQUIRED libdrm)
+    include_directories(${DRM_INCLUDE_DIRS})
+
+    pkg_check_modules(UDEV REQUIRED libudev)
+    include_directories(${UDEV_INCLUDE_DIRS})
+   
+    pkg_check_modules(EVDEV REQUIRED libevdev)
+    include_directories(${EVDEV_INCLUDE_DIRS})
+    
+    pkg_check_modules(MTDEV REQUIRED mtdev)
+    include_directories(${MTDEV_INCLUDE_DIRS})
+
+    pkg_check_modules(LIBINPUT REQUIRED libinput)
+    include_directories(${LIBINPUT_INCLUDE_DIRS})
+
+    set(GAMEPLAY_SRC 
+        ${GAMEPLAY_SRC}
+        src/kms.cpp
+        src/kms.h)
+
+ELSE(${PLATFORM} MATCHES "arm")
+    add_definitions(-DGP_PLATFORM_LINUX) 
+    pkg_check_modules(GTK2 REQUIRED gtk+-2.0)
+    include_directories(${GTK2_INCLUDE_DIRS})
+    add_definitions(${GTK2_CFLAGS_OTHER})
+ENDIF(${PLATFORM} MATCHES "arm")
 ENDIF(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
 add_definitions(-lstdc++)

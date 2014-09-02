@@ -10,7 +10,12 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/external-deps/glew/include
 )
 
-add_definitions(-D__linux__)
+IF( ${PLATFORM} MATCHES "arm")
+    add_definitions(-DGP_PLATFORM_LINUX_KMS)
+    include_directories(${EGL_INCLUDE_DIRS})
+ELSE(${PLATFORM} MATCHES "arm")
+    add_definitions(-DGP_PLATFORM_LINUX) 
+ENDIF(${PLATFORM} MATCHES "arm")
 
 link_directories(
     ${CMAKE_SOURCE_DIR}/external-deps/lua/lib/linux/${ARCH_DIR}
@@ -30,23 +35,37 @@ set(GAMEPLAY_LIBRARIES
     png
     z
     vorbis
+    vorbisfile
     ogg
     BulletDynamics
     BulletCollision
     LinearMath
     openal
-    GLEW
-    GL
     rt
     dl
-    X11
     pthread
-    gtk-x11-2.0
     glib-2.0
     gobject-2.0
 ) 
 
-add_definitions(-lstdc++ -lgameplay -lm -llua -lz -lpng -lvorbis -logg -lBulletCollision -lBulletDynamics -lLinearMath -lopenal -LGLEW -lGL -lrt -ldl -lX11 -lpthread -lgtk-x11-2.0 -lglib-2.0 -lgobject-2.0)
+IF (${PLATFORM} MATCHES "arm")
+    SET(GAMEPLAY_LIBRARIES
+        ${GAMEPLAY_LIBRARIES} 
+        ${GLESv2_LDFLAGS}
+        ${EGL_LDFLAGS}
+        ${GBM_LDFLAGS}
+        ${DRM_LDFLAGS}
+        ${UDEV_LDFLAGS}
+        ${EVDEV_LDFLAGS}
+        ${MTDEV_LDFLAGS}
+        ${LIBINPUT_LDFLAGS}
+        )
+
+    MESSAGE(INFO " building with arm")
+ELSE ( !${PLATFORM} MATCHES "arm")
+   set(GAMEPLAY_LIBRARIES ${GAMEPLAY_LIBRARIES} GLEW GL X11 gtk-x11-2.0)
+   MESSAGE(INFO " building with x11")
+ENDIF(${PLATFORM} MATCHES "arm")
 
 set( GAME_NAME sample-browser)
 

@@ -236,7 +236,17 @@ using std::va_list;
     #define GLEW_STATIC
     #include <GL/glew.h>
     #define USE_VAO
-#elif __linux__
+#elif GP_PLATFORM_LINUX_KMS
+    #include <EGL/egl.h>
+    #include <GLES2/gl2.h>
+    #include <GLES2/gl2ext.h>
+    #define GL_DEPTH24_STENCIL8 GL_DEPTH24_STENCIL8_OES
+    #define glClearDepth glClearDepthf
+    #define OPENGL_ES
+    #ifdef __arm__
+//        #define USE_NEON
+    #endif
+#elif GP_PLATFORM_LINUX
         #define GLEW_STATIC
         #include <GL/glew.h>
         #define USE_VAO
@@ -267,6 +277,7 @@ using std::va_list;
     #else
         #error "Unsupported Apple Device"
     #endif
+
 #endif
 
 // Graphics (GLSL)
@@ -354,5 +365,4 @@ extern ALenum __al_error_code;
  * Accesses the most recently set global AL error.
  */
 #define AL_LAST_ERROR() __al_error_code
-
 #endif
